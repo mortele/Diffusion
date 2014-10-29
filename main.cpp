@@ -24,7 +24,7 @@ using arma::linspace;
 int main() {
     // Numerics.
     double D  = 1;
-    double T  = 1;
+    double T  = 5;
     double dx = 0.01;
     double dt = 0.0001;
     double a  = dt / dx;
@@ -32,25 +32,25 @@ int main() {
     int    Nt = floor(T/dt);
 
     // Set up printing to file.
-    ofstream outFile;
-    outFile.open("PDE_data.dat", std::ios::out);
+    ofstream uFile;
+    ofstream parameterFile;
+    uFile.open        ("PDE_data.dat",       std::ios::out);
+    parameterFile.open("parameter_data.dat", std::ios::out);
 
     // Set up initial conditions and boundary conditions.
-    vec boundaryConditions = zeros(2);
-    vec initialConditions  = 1-linspace(0,1,Nx);
-    initialConditions(0)   = initialConditions(Nx-1) = 0;
+    vec boundaryConditions  = zeros(2);
+    vec initialConditions   = 1-linspace(0,1,Nx);
+    initialConditions(0)    = boundaryConditions(0);
+    initialConditions(Nx-1) = boundaryConditions(1);
 
     // Create a solver, pass parameters to it, and solve the PDE.
     PDESolver solver            (new Explicit);
     solver.setInitialConditions (initialConditions);
     solver.setBoundaryConditions(boundaryConditions);
-    solver.setUpSolver          (Nx, Nt, a);
+    solver.setUpSolver          (Nx, Nt, a, dx, dt, D, T);
 
     // Integrate the system.
-    solver.solve(&outFile);
-
-    // Close output stream, ensure buffers are written.
-    outFile.close();
+    solver.solve(&uFile, &parameterFile);
 
     // Program run successfully.
     return 0;

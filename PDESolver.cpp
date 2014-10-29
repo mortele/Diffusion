@@ -30,9 +30,11 @@ void PDESolver::setBoundaryConditions(vec boundaryConditions) {
 }
 
 
-vec PDESolver::solve(ofstream* outFile) {
-    m_outFile = outFile;
-    this->writeToFile(m_initialConditions);
+vec PDESolver::solve(ofstream* uFile, ofstream* parameterFile) {
+    m_uFile         = uFile;
+    m_parameterFile = parameterFile;
+    this->writeParametersToFile();
+    this->writeToFile          (m_initialConditions);
 
     for (int i = 0; i < m_Nt; i++) {
         m_u = m_algorithm->advanceOneTimeStep(m_u);
@@ -49,20 +51,41 @@ vec PDESolver::solve(ofstream* outFile) {
 }
 
 
-void PDESolver::setUpSolver(int Nx, int Nt, double a) {
+void PDESolver::setUpSolver(int Nx,
+                            int Nt,
+                            double a,
+                            double dx,
+                            double dt,
+                            double D,
+                            double T) {
+
     m_algorithm->setUpAlgorithm(Nx, a);
     m_Nx = Nx;
     m_Nt = Nt;
-    m_a = a;
+    m_a  = a;
+    m_dx = dx;
+    m_dt = dt;
+    m_D  = D;
+    m_T  = T;
 }
 
 
 void PDESolver::writeToFile(vec u) {
     for (int i = 0; i < m_Nx-1; i++) {
-        (*m_outFile) << u(i) << " ";
+        (*m_uFile) << u(i) << " ";
     }
-    (*m_outFile) << "\n";
+    (*m_uFile) << "\n";
 }
+
+
+void PDESolver::writeParametersToFile() {
+    (*m_parameterFile) << m_Nx << " " << m_Nt << " " << m_a << " ";
+    (*m_parameterFile) << m_dx << " " << m_dt << " " << m_D << " ";
+    (*m_parameterFile) << m_T;
+}
+
+
+
 
 
 
