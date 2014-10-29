@@ -22,13 +22,14 @@ using arma::linspace;
 
 int main() {
     // Numerics.
+    int    Nx = 1e3;
+    int    Nt = 1e3;
     double D  = 1;
-    double T  = 1;
-    double dx = 0.02;
-    double dt = dx * dx / 2;
+    double T  = 0.3;
+    double dx = D / Nx;
+    double dt = T / Nt;
     double a  = dt / (dx*dx);
-    int    Nx = floor(D / dx);
-    int    Nt = floor(T / dt);
+
 
     // Set up printing to file.
     ofstream uFile;
@@ -43,7 +44,7 @@ int main() {
     initialConditions(Nx-1) = boundaryConditions(1);
 
     // Create a solver, pass parameters to it, and solve the PDE.
-    PDESolver solver            (new Explicit);
+    PDESolver solver            (new Implicit);
     solver.setInitialConditions (initialConditions);
     solver.setBoundaryConditions(boundaryConditions);
     solver.setUpSolver          (Nx, Nt, a, dx, dt, D, T);
@@ -52,7 +53,7 @@ int main() {
     solver.solve(&uFile, &parameterFile);
 
     // Compute the closed form solution.
-    closedForm(linspace(0,D,Nx), linspace(0,T,Nt), Nx, Nt, 1000);
+    closedForm(linspace(0,D,Nx), linspace(0,T,Nt+1), Nx, Nt+1, 200);
 
     // Program run successfully.
     return 0;

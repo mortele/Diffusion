@@ -73,7 +73,7 @@ void PDESolver::setUpSolver(int Nx,
 
 
 void PDESolver::writeToFile(vec u) {
-    for (int i = 0; i < m_Nx-1; i++) {
+    for (int i = 0; i < m_Nx; i++) {
         (*m_uFile) << setprecision(16) << u(i) << " ";
     }
     (*m_uFile) << "\n";
