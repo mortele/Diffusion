@@ -1,8 +1,10 @@
-#include <armadillo>
 #include <PDESolver.h>
+#include <armadillo>
+#include <iomanip>
 #include <Algorithms/Algorithm.h>
 
 using std::ofstream;
+using std::setprecision;
 using arma::vec;
 using arma::zeros;
 
@@ -72,16 +74,16 @@ void PDESolver::setUpSolver(int Nx,
 
 void PDESolver::writeToFile(vec u) {
     for (int i = 0; i < m_Nx-1; i++) {
-        (*m_uFile) << u(i) << " ";
+        (*m_uFile) << setprecision(16) << u(i) << " ";
     }
     (*m_uFile) << "\n";
 }
 
 
 void PDESolver::writeParametersToFile() {
-    (*m_parameterFile) << m_Nx << " " << m_Nt << " " << m_a << " ";
-    (*m_parameterFile) << m_dx << " " << m_dt << " " << m_D << " ";
-    (*m_parameterFile) << m_T;
+    (*m_parameterFile) << setprecision(16) << m_Nx << " " << m_Nt << " ";
+    (*m_parameterFile) << m_a << " "       << m_dx << " " << m_dt << " ";
+    (*m_parameterFile) << m_D << " "       << m_T;
 }
 
 

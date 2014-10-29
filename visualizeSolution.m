@@ -1,13 +1,15 @@
 %% Clean up
-% close all;
-% clear all;
-% clc;
-% format;
+close all;
+clear all;
+clc;
+format;
 
 
 %% Load in data
-u          = load('../Diffusion-Debug/PDE_data.dat');
-parameters = load('../Diffusion-Debug/parameter_data.dat');
+u          = load('../Diffusion--Release/PDE_data.dat');
+parameters = load('../Diffusion--Release/parameter_data.dat');
+closedForm = load('../Diffusion--Release/closedForm_data.dat');
+closedForm = closedForm(:,1:end-1);
 
 
 %% Organize data
@@ -29,17 +31,21 @@ u_ss = 1-x;
 % Set up figure.
 figure(1);
 hold on;
-p = plot(x,u_ss-u(1,:), 'r-');
+p = plot(x, u_ss  -  u(1,:), 'r-');
+c = plot(x, closedForm(1,:), 'b-');
 
 % Plot aesthetics.
-h = legend('t = 0.000');
+t = text(0.825, 0.8, ' t = 0.0 ', 'FontSize', 14, 'Units', 'Normalized',...
+         'EdgeColor', [0 0 0]);
+h = legend('numerical approximation', 'closed form');
 set(h, 'FontSize', 14);
 xlabel('Position, x',    'FontSize', 14);
 ylabel('Density,  u(x)', 'FontSize', 14);
 
 % Animate the solution, u.
 for i=2:20:size(u,1)
-    set(h, 'String', sprintf('t = %6.3f', dt*i));
-    set(p, 'YData', u_ss-u(i,:));
-    pause(1e-15);
+    set(t, 'String', sprintf(' t = %6.3f ', dt*i));
+    set(p, 'YData', u_ss - u(i,:));
+    set(c, 'YData', u_ss - closedForm(i,:));
+    pause(1e-3);
 end

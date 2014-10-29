@@ -8,12 +8,14 @@ SOURCES += main.cpp \
     Algorithms/Algorithm.cpp \
     Algorithms/Explicit.cpp \
     Algorithms/Implicit.cpp \
-    Algorithms/CrankNicolson.cpp
+    Algorithms/CrankNicolson.cpp \
+    ClosedForm.cpp
 
 HEADERS += \
     PDESolver.h \
     Algorithms/Algorithm.h \
     Algorithms/Explicit.h \
     Algorithms/Implicit.h \
-    Algorithms/CrankNicolson.h
+    Algorithms/CrankNicolson.h \
+    ClosedForm.h
 

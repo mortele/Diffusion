@@ -6,30 +6,29 @@
 #include <cstdlib>
 
 #include <PDESolver.h>
-
+#include <ClosedForm.h>
 #include <Algorithms/Algorithm.h>
 #include <Algorithms/Explicit.h>
 #include <Algorithms/Implicit.h>
 #include <Algorithms/CrankNicolson.h>
 
-
 using std::cout;
 using std::endl;
 using std::ofstream;
-
 using arma::vec;
 using arma::zeros;
 using arma::linspace;
 
+
 int main() {
     // Numerics.
     double D  = 1;
-    double T  = 5;
-    double dx = 0.01;
-    double dt = 0.0001;
-    double a  = dt / dx;
-    int    Nx = floor(D/dx);
-    int    Nt = floor(T/dt);
+    double T  = 1;
+    double dx = 0.02;
+    double dt = dx * dx / 2;
+    double a  = dt / (dx*dx);
+    int    Nx = floor(D / dx);
+    int    Nt = floor(T / dt);
 
     // Set up printing to file.
     ofstream uFile;
@@ -39,7 +38,7 @@ int main() {
 
     // Set up initial conditions and boundary conditions.
     vec boundaryConditions  = zeros(2);
-    vec initialConditions   = 1-linspace(0,1,Nx);
+    vec initialConditions   = 1 - linspace(0, D, Nx);
     initialConditions(0)    = boundaryConditions(0);
     initialConditions(Nx-1) = boundaryConditions(1);
 
@@ -51,6 +50,9 @@ int main() {
 
     // Integrate the system.
     solver.solve(&uFile, &parameterFile);
+
+    // Compute the closed form solution.
+    closedForm(linspace(0,D,Nx), linspace(0,T,Nt), Nx, Nt, 1000);
 
     // Program run successfully.
     return 0;
