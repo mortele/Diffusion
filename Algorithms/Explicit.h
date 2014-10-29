@@ -6,5 +6,6 @@ class Explicit : public Algorithm {
 
 public:
     Explicit() {}
-    arma::vec advanceOneTimeStep(arma::vec u);
+    arma::vec advanceOneTimeStep(arma::vec);
+    double    spatialDerivative(double, double, double);
 };

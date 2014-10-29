@@ -17,27 +17,40 @@ void PDESolver::setAlgorithm(Algorithm* algorithm ) {
 }
 
 
+void PDESolver::setInitialConditions(arma::vec initialConditions) {
+    m_algorithm->setInitialConditions(initialConditions);
+    m_initialConditions = initialConditions;
+    m_u                 = initialConditions;
+}
+
+
 void PDESolver::setBoundaryConditions(vec boundaryConditions) {
     m_algorithm->setBoundaryConditions(boundaryConditions);
+    m_boundaryConditions = boundaryConditions;
 }
 
 
 vec PDESolver::solve(ofstream* outFile) {
     m_outFile = outFile;
-
-    vec u = zeros(m_Nx);
+    this->writeToFile(m_initialConditions);
 
     for (int i = 0; i < m_Nt; i++) {
-        u = m_algorithm->advanceOneTimeStep(u);
+        m_u = m_algorithm->advanceOneTimeStep(m_u);
+        this->writeToFile(m_u);
 
-        this->writeToFile(u);
+        // Print the progress to terminal.
+        if (i % 100 == 0) {
+            printf("Progress: %10.2f %%\r", 100 * i / ((double) m_Nt));
+            fflush(stdout);
+        }
     }
 
-    return u;
+    return m_u;
 }
 
 
 void PDESolver::setUpSolver(int Nx, int Nt, double a) {
+    m_algorithm->setUpAlgorithm(Nx, a);
     m_Nx = Nx;
     m_Nt = Nt;
     m_a = a;
@@ -45,8 +58,11 @@ void PDESolver::setUpSolver(int Nx, int Nt, double a) {
 
 
 void PDESolver::writeToFile(vec u) {
-    for (int i = 0; i < m_Nx; i++) {
-        m_outFile << u(i) << " ";
+    for (int i = 0; i < m_Nx-1; i++) {
+        (*m_outFile) << u(i) << " ";
     }
-    m_outFile << "\n";
+    (*m_outFile) << "\n";
 }
+
+
+
